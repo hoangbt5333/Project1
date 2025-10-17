@@ -1,0 +1,141 @@
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+body, html {
+  margin: 0;
+  padding: 0;
+}
+body {
+  background: #f2f6fa;
+}
+
+/* Header */
+ .header {
+  background-color: #0d6efd;
+  color: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+  padding: 0.75rem 2rem;
+  margin-bottom: 0;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.header .user-info {
+  min-width: 120px;
+  text-align: right;
+  font-weight: 500;
+}
+
+/* Sidebar */
+.sidebar {
+  background: #1f2937;
+  color: #fff;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.05);
+  min-height: calc(100vh - 56px);
+  width: 230px;
+  position: relative;
+  z-index: 10;
+}
+.sidebar-header {
+  border-bottom: 1px solid #fff2;
+  padding: 1.2rem 1rem 1rem 1.2rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem 0;
+}
+.sidebar-menu .nav-link {
+  color: #d1d5db;
+  text-decoration: none;
+  padding: 0.75rem 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: background 0.2s, color 0.2s;
+  border-radius: 0 20px 20px 0;
+  font-size: 1.05rem;
+}
+.sidebar-menu .nav-link:hover, .sidebar-menu .nav-link.active {
+  background: #2563eb;
+  color: #fff;
+}
+
+/* Main content */
+.main-content {
+  padding: 0 0 0 0.5rem;
+}
+.card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+.card-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 1.2rem;
+}
+.table {
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+}
+.btn {
+  border-radius: 6px;
+  font-size: 0.98rem;
+}
+.btn-primary {
+  background-color: #2196f3;
+  border-color: #2196f3;
+}
+.btn-success {
+  background-color: #22c55e;
+  border-color: #22c55e;
+}
+.btn-danger {
+  background-color: #ef4444;
+  border-color: #ef4444;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+}
+.main-content > .container-fluid {
+  padding-top: 1rem;
+  padding-left: 0;
+  padding-right: 0;
+}
+.header {
+  height: 60px;
+  background-color: #0d6efd;
+  margin: 0;
+  
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: white;
+}
+.container-fluid {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.header .btn {
+  border-radius: 20px;
+  font-size: 0.9rem;
+}
+.header .btn:hover {
+  background-color: #0b5ed7;
+  border-color: #0a58ca;
+}
