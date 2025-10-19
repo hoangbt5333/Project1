@@ -33,10 +33,13 @@ app.use((req, res, next) => {
 
 const userRouter = require('./routes/user');
 const sinhvienRouter = require('./routes/sinhvien');
+const lopRouter = require('./routes/lop');
+const khoaRouter = require('./routes/khoa');
 
 app.use('/user', userRouter);
 app.use('/sinhvien', sinhvienRouter);
-
+app.use('/lop', lopRouter);
+app.use('/khoa', khoaRouter);
 
 
 // Cấu hình thư mục public để chứa các file tĩnh
@@ -52,11 +55,11 @@ app.get('/sinhvien', (req, res) => {
 });
 
 app.get('/lop', (req, res) => {
-  res.render('lop', { title: 'Quản lý lớp' });
+  res.render('lop', { title: 'Quản lý lớp', classes: [] });
 });
 
 app.get('/khoa', (req, res) => {
-  res.render('khoa', { title: 'Quản lý khoa' });
+  res.render('khoa', { title: 'Quản lý khoa', departments: [] });
 });
 
 const PORT = 3000;

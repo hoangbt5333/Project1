@@ -9,18 +9,15 @@ function isLoggedIn(req, res, next) {
 
 router.get('/', isLoggedIn, (req, res) => {
   const sql = `
-    SELECT sv.stt, sv.ma_sv, sv.ho_ten, l.ten_lop
-    FROM sinhvien sv
-    LEFT JOIN lop l ON sv.ma_lop = l.ma_lop
-    ORDER BY sv.stt ASC
-    `;
+    SELECT * FROM lop
+  `;
 
   db.query(sql, (err, results) => {
-    if (err){
+    if (err) {
       // console.error('❌ Lỗi truy vấn SQL:', err);
       return res.status(500).send('Error querying database');
     }
-    res.render('sinhvien', { title: 'Quản lý sinh viên', students: results });
+    res.render('lop', { title: 'Quản lý lớp', classes: results });
   });
 });
 

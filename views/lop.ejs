@@ -16,15 +16,24 @@
             </tr>
         </thead>
         <tbody>
+            <% if (classes.length === 0) { %>
             <tr>
-            <td>CTK44</td>
-            <td>Công nghệ thông tin 44</td>
-            <td>CNTT</td>
-            <td>50</td>
-            <td>
-                <button class="btn btn-sm btn-warning"><i class="fa-solid fa-pen"></i></button>
-                <button class="btn btn-sm btn-danger"><i class="fa-solid fa-trash"></i></button>
-            </td>
+                <td colspan="6" class="text-center text-muted">Chưa có dữ liệu lớp học</td>
             </tr>
+            <% } else { %>
+            <% classes.forEach((lop, index) => { %>
+                <tr>
+                    
+                    <td><%= lop.ma_lop %></td>
+                    <td><%= lop.ten_lop %></td>
+                    <td><%= lop.khoa || '—' %></td>
+                    <td><%= lop.so_sinh_vien || 0 %></td>
+                    <td>
+                        <button class="btn btn-sm btn-warning"><i class="fa-solid fa-pen"></i></button>
+                        <button class="btn btn-sm btn-danger"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>
+            <% }) %>
+            <% } %>
         </tbody>
         </table>

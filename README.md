@@ -1,7 +1,7 @@
 # 🎓 Website Quản lý Sinh viên
 
 Dự án web giúp quản lý sinh viên, lớp học, khoa, môn học,... được xây dựng bằng **Node.js**, **Express**, **EJS**, và **MySQL**.  
-Giao diện thân thiện, dễ mở rộng, phù hợp cho học tập hoặc làm đồ án web cơ bản.
+Giao diện thân thiện, dễ mở rộng, phù hợp cho giáo viên các cấp.
 
 ---
 

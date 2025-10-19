@@ -16,15 +16,17 @@
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td>1</td>
-        <td>SV001</td>
-        <td>Nguyễn Văn A</td>
-        <td>CTK44</td>
-        <td>
-          <button class="btn btn-sm btn-warning"><i class="fa-solid fa-pen"></i></button>
-          <button class="btn btn-sm btn-danger"><i class="fa-solid fa-trash"></i></button>
-        </td>
-      </tr>
+      <% students.forEach((student, i) => { %>
+        <tr>
+          <td><%= i + 1 %></td>
+          <td><%= student.ma_sv %></td>
+          <td><%= student.ho_ten %></td>
+          <td><%= student.ma_lop %></td>
+          <td>
+            <button class="btn btn-sm btn-warning"><i class="fa-solid fa-pen"></i></button>
+            <button class="btn btn-sm btn-danger"><i class="fa-solid fa-trash"></i></button>
+          </td>
+        </tr>
+      <% }) %>
     </tbody>
   </table>
