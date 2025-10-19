@@ -1,0 +1,17 @@
+<h2>Sửa thông tin khoa</h2>
+<form action="/khoa/edit/<%= departments.ma_khoa %>" method="POST" class="mt-3">
+  <div class="mb-3">
+    <label class="form-label">Mã khoa</label>
+    <input type="text" name="ma_khoa" class="form-control" value="<%= departments.ma_khoa %>" required>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Tên khoa</label>
+    <input type="text" name="ten_khoa" class="form-control" value="<%= departments.ten_khoa %>" required>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Trưởng khoa</label>
+    <input type="text" name="truong_khoa" class="form-control" value="<%= departments.truong_khoa %>">
+  </div>
+  <button type="submit" class="btn btn-success">Cập nhật</button>
+  <a href="/khoa" class="btn btn-secondary">Hủy</a>
+</form>

@@ -1,0 +1,17 @@
+<h2>Thêm khoa mới</h2>
+<form action="/khoa/add" method="POST" class="mt-3">
+  <div class="mb-3">
+    <label class="form-label">Mã khoa</label>
+    <input type="text" name="ma_khoa" class="form-control" required>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Tên khoa</label>
+    <input type="text" name="ten_khoa" class="form-control" required>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Trưởng khoa</label>
+    <input type="text" name="truong_khoa" class="form-control">
+  </div>
+  <button type="submit" class="btn btn-primary">Lưu</button>
+  <a href="/khoa" class="btn btn-secondary">Hủy</a>
+</form>
