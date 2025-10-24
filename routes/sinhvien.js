@@ -9,19 +9,24 @@ function isLoggedIn(req, res, next) {
 
 // Hiển thị danh sách sinh viên
 router.get('/', isLoggedIn, (req, res) => {
+  const keyword = req.query.search ? req.query.search.trim() : '';
+  
   const sql = `
     SELECT sv.stt, sv.ma_sv, sv.ho_ten, l.ten_lop
     FROM sinhvien sv
     LEFT JOIN lop l ON sv.ma_lop = l.ma_lop
+    ${keyword ? "WHERE sv.ma_sv LIKE ? OR sv.ho_ten LIKE ?" : ""}
     ORDER BY sv.stt ASC
     `;
 
-  db.query(sql, (err, results) => {
+  const params = keyword ? [`%${keyword}%`, `%${keyword}%`] : [];
+
+  db.query(sql, params, (err, results) => {
     if (err){
       // console.error('❌ Lỗi truy vấn SQL:', err);
       return res.status(500).send('Error querying database');
     }
-    res.render('sinhvien', { title: 'Quản lý sinh viên', students: results });
+    res.render('sinhvien', { title: 'Quản lý sinh viên', students: results, keyword : keyword});
   });
 });
 

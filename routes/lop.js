@@ -10,7 +10,7 @@ function isLoggedIn(req, res, next) {
 // Hiển thị danh sách lớp
 router.get('/', isLoggedIn, (req, res) => {
   const sql = `
-    SELECT * FROM lop
+    SELECT * FROM lop_view
   `;
 
   db.query(sql, (err, results) => {
