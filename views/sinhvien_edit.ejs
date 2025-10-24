@@ -1,0 +1,21 @@
+<h2>Sửa thông tin sinh viên</h2>
+<form action="/sinhvien/edit/<%= students.ma_sv %>" method="POST" class="mt-3">
+  <div class="mb-3">
+    <label class="form-label">Mã sinh viên</label>
+    <input type="text" name="ma_sinh_vien" class="form-control" value="<%= students.ma_sv %>" required>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Họ tên</label>
+    <input type="text" name="ho_ten" class="form-control" value="<%= students.ho_ten %>" required>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Lớp</label>
+    <select name="ma_lop" class="form-select" required>
+      <% lopList.forEach(k => { %>
+        <option value="<%= k.ma_lop %>" <%= k.ma_lop === students.ma_lop ? 'selected' : '' %>><%= k.ten_lop %></option>
+      <% }) %>
+    </select>
+  </div>
+  <button type="submit" class="btn btn-success">Cập nhật</button>
+  <a href="/sinhvien" class="btn btn-secondary">Hủy</a>
+</form>
