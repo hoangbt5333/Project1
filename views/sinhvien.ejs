@@ -35,6 +35,9 @@
           <td><%= student.ho_ten %></td>
           <td><%= student.ten_lop %></td>
           <td>
+            <form action="/sinhvien/view/<%= student.ma_sv %>" method="GET" class="d-inline">
+              <button type="submit" class="btn btn-sm btn-primary"><i class="fa-solid fa-search"></i></button>
+            </form>
             <form action="/sinhvien/edit/<%= student.ma_sv %>" method="GET" class="d-inline">
               <button type="submit" class="btn btn-sm btn-warning"><i class="fa-solid fa-pen"></i></button>
             </form>

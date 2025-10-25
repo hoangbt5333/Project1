@@ -1,21 +1,58 @@
-<h2>Sửa thông tin sinh viên</h2>
-<form action="/sinhvien/edit/<%= students.ma_sv %>" method="POST" class="mt-3">
-  <div class="mb-3">
-    <label class="form-label">Mã sinh viên</label>
-    <input type="text" name="ma_sinh_vien" class="form-control" value="<%= students.ma_sv %>" required>
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2>Sửa thông tin sinh viên</h2>
+  <a href="/sinhvien" class="btn btn-secondary"><i class="fa fa-arrow-left"></i> Quay lại</a>
+</div>
+
+<form action="/sinhvien/edit/<%= students.ma_sv %>" method="POST" class="card p-4 shadow-sm">
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <label class="form-label">Mã sinh viên</label>
+      <input type="text" class="form-control" value="<%= students.ma_sv %>" readonly>
+    </div>
+
+    <div class="col-md-6 mb-3">
+      <label class="form-label">Họ tên</label>
+      <input type="text" name="ho_ten" class="form-control" value="<%= students.ho_ten %>" required>
+    </div>
+
+    <div class="col-md-6 mb-3">
+      <label class="form-label">Ngày sinh</label>
+      <input type="date" name="ngay_sinh" class="form-control" value="<%= students.ngay_sinh ? students.ngay_sinh.toISOString().split('T')[0] : '' %>">
+    </div>
+
+    <div class="col-md-6 mb-3">
+      <label class="form-label">Giới tính</label>
+      <select name="gioi_tinh" class="form-select">
+        <option value="">-- Chọn giới tính --</option>
+        <option value="Nam" <%= students.gioi_tinh === 'Nam' ? 'selected' : '' %>>Nam</option>
+        <option value="Nữ" <%= students.gioi_tinh === 'Nữ' ? 'selected' : '' %>>Nữ</option>
+      </select>
+    </div>
+
+    <div class="col-md-12 mb-3">
+      <label class="form-label">Địa chỉ</label>
+      <input type="text" name="dia_chi" class="form-control" value="<%= students.dia_chi || '' %>">
+    </div>
+
+    <div class="col-md-6 mb-3">
+      <label class="form-label">Email</label>
+      <input type="email" name="email" class="form-control" value="<%= students.email || '' %>">
+    </div>
+
+    <div class="col-md-6 mb-3">
+      <label class="form-label">Số điện thoại</label>
+      <input type="text" name="so_dien_thoai" class="form-control" value="<%= students.so_dien_thoai || '' %>">
+    </div>
+
+    <div class="col-md-6 mb-3">
+      <label class="form-label">Lớp</label>
+      <select name="ma_lop" class="form-select" required>
+        <% lopList.forEach(l => { %>
+          <option value="<%= l.ma_lop %>" <%= l.ma_lop === students.ma_lop ? 'selected' : '' %>><%= l.ten_lop %></option>
+        <% }) %>
+      </select>
+    </div>
   </div>
-  <div class="mb-3">
-    <label class="form-label">Họ tên</label>
-    <input type="text" name="ho_ten" class="form-control" value="<%= students.ho_ten %>" required>
-  </div>
-  <div class="mb-3">
-    <label class="form-label">Lớp</label>
-    <select name="ma_lop" class="form-select" required>
-      <% lopList.forEach(k => { %>
-        <option value="<%= k.ma_lop %>" <%= k.ma_lop === students.ma_lop ? 'selected' : '' %>><%= k.ten_lop %></option>
-      <% }) %>
-    </select>
-  </div>
-  <button type="submit" class="btn btn-success">Cập nhật</button>
-  <a href="/sinhvien" class="btn btn-secondary">Hủy</a>
+
+  <button type="submit" class="btn btn-primary mt-3">Lưu thay đổi</button>
 </form>

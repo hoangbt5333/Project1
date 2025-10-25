@@ -95,13 +95,14 @@ router.get('/edit/:ma_sv', isLoggedIn, (req, res) => {
 // Cập nhật thông tin sinh viên
 router.post('/edit/:ma_sv', isLoggedIn, (req, res) => {
   const ma_sv = req.params.ma_sv;
-  const { ma_sinh_vien, ho_ten, ma_lop } = req.body;
+  const { ho_ten, ngay_sinh, gioi_tinh, dia_chi, email, so_dien_thoai, ma_lop } = req.body;
   const sql = `
     UPDATE sinhvien
-    SET ma_sv = ?, ho_ten = ?, ma_lop = ?
+    SET ho_ten = ?, ngay_sinh = ?, gioi_tinh = ?, dia_chi = ?, email = ?, so_dien_thoai = ?, ma_lop = ?
     WHERE ma_sv = ?
   `;
-  db.query(sql, [ma_sinh_vien, ho_ten, ma_lop, ma_sv], (err, result) => {
+
+  db.query(sql, [ho_ten, ngay_sinh, gioi_tinh, dia_chi, email, so_dien_thoai, ma_lop, ma_sv], (err, result) => {
     if (err) {
       // console.error('❌ Lỗi truy vấn SQL:', err);
       return res.status(500).send('Error updating data');
@@ -109,6 +110,35 @@ router.post('/edit/:ma_sv', isLoggedIn, (req, res) => {
     res.redirect('/sinhvien');
   });
 });
+
+//Xem thông tin sinh viên
+router.get('/view/:ma_sv', (req, res) => {
+  const ma_sv = req.params.ma_sv;
+
+  const sql = `
+    SELECT 
+      sv.*, 
+      l.ten_lop, 
+      k.ten_khoa
+    FROM sinhvien sv
+    LEFT JOIN lop l ON sv.ma_lop = l.ma_lop
+    LEFT JOIN khoa k ON l.ma_khoa = k.ma_khoa
+    WHERE sv.ma_sv = ?
+  `;
+
+  db.query(sql, [ma_sv], (err, result) => {
+    if (err) {
+      console.error('❌ Lỗi truy vấn SQL:', err);
+      return res.status(500).send('Lỗi máy chủ (truy vấn)');
+    }
+
+    if (result.length === 0) {
+      return res.status(404).send('Không tìm thấy sinh viên');
+    }
+    res.render('sinhvien_detail', { title: 'Thông tin sinh viên', student: result[0] });
+  });
+});
+
 
 // Xóa sinh viên
 router.post('/delete/:ma_sv', isLoggedIn, (req, res) => {
