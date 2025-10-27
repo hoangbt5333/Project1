@@ -1,0 +1,25 @@
+<h2>Sửa thông môn học</h2>
+<form action="/monhoc/edit/<%= subjects.ma_mon_hoc %>" method="POST" class="mt-3">
+  <div class="mb-3">
+    <label class="form-label">Mã môn học</label>
+    <input type="text" name="ma_mon_hoc" class="form-control" value="<%= subjects.ma_mon_hoc %>" required>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Tên môn học</label>
+    <input type="text" name="ten_mon_hoc" class="form-control" value="<%= subjects.ten_mon_hoc %>" required>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Số tín chỉ</label>
+    <input type="number" name="tin_chi" class="form-control" value="<%= subjects.tin_chi %>" required>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Khoa</label>
+    <select name="ma_khoa" class="form-select" required>
+      <% khoaList.forEach(k => { %>
+        <option value="<%= k.ma_khoa %>" <%= k.ma_khoa === subjects.ma_khoa ? 'selected' : '' %>><%= k.ten_khoa %></option>
+      <% }) %>
+    </select>
+  </div>
+  <button type="submit" class="btn btn-success">Cập nhật</button>
+  <a href="/monhoc" class="btn btn-secondary">Hủy</a>
+</form>
