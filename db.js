@@ -4,15 +4,15 @@ const db = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   password: 'Hoang[85147]',
-  database: 'quanlysv'
+  database: 'quanlysv',
 });
 
 db.connect((err) => {
   if (err) {
-    console.error('Lỗi kết nối đến MySQL:', err);
-    return;
+    console.error('Lỗi kết nối đến MySQL:', err.message);
+  } else {
+    console.log('Kết nối thành công đến MySQL');
   }
-  console.log('Kết nối thành công đến MySQL');
 });
 
 module.exports = db;

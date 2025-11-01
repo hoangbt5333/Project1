@@ -36,11 +36,13 @@ const sinhvienRouter = require('./routes/sinhvien');
 const lopRouter = require('./routes/lop');
 const khoaRouter = require('./routes/khoa');
 const monhocRouter = require('./routes/monhoc');
+const diemRouter = require('./routes/diem');
 
 app.use('/user', userRouter);
 app.use('/sinhvien', sinhvienRouter);
 app.use('/lop', lopRouter);
 app.use('/khoa', khoaRouter);
+app.use('/diem', diemRouter);
 app.use('/monhoc', monhocRouter);
 
 
@@ -66,6 +68,10 @@ app.get('/khoa', (req, res) => {
 
 app.get('/monhoc', (req, res) => {
   res.render('monhoc', { title: 'Quản lý môn học', subjects: [] });
+});
+
+app.get('/diem', (req, res) => {
+  res.render('diem', { title: 'Quản lý điểm', scores: [] });
 });
 
 const PORT = 3000;

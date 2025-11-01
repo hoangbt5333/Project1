@@ -1,0 +1,73 @@
+<form action="/diem/add" method="get">
+  <label>Chọn môn học:</label>
+  <select name="ma_mon_hoc" onchange="this.form.submit()">
+    <option value="">--Chọn--</option>
+    <% monhocList.forEach(m => { %>
+      <option value="<%= m.ma_mon_hoc %>" <%= maMonHoc && maMonHoc == m.ma_mon_hoc ? 'selected' : '' %>>
+        <%= m.ten_mon_hoc %>
+      </option>
+    <% }) %>
+  </select>
+</form>
+
+<% if (sinhvienList.length > 0) { %>
+<form action="/diem/add" method="post">
+  <input type="hidden" name="ma_mon_hoc" value="<%= maMonHoc %>">
+
+  <table class="table table-striped table-hover">
+    <thead class="table-primary">
+    <tr>
+      <th>Mã SV</th>
+      <th>Họ tên</th>
+      <th>Điểm chữ</th>
+      <th>Điểm số</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% sinhvienList.forEach((sv, i) => { %>
+      <tr>
+        <td><%= sv.ma_sv %></td>
+        <td><%= sv.ho_ten %></td>
+        <td><input name="sinhvien[<%= i %>][diem_chu]"
+            id="diem_chu_<%= i %>"
+            oninput="updateScore(<%= i %>)"
+          value="<%= sv.diem_chu || '' %>">
+        </td>
+        <td><input name="sinhvien[<%= i %>][diem_so]"
+           id="diem_so_<%= i %>"
+           value="<%= sv.diem_so || '' %>">
+        </td>
+        <input type="hidden" name="sinhvien[<%= i %>][ma_sv]" value="<%= sv.ma_sv %>">
+      </tr>
+    <% }) %>
+  </tbody>
+  </table>
+  <button type="submit">Lưu điểm</button>
+</form>
+<% } %>
+
+<script>
+  const gradeMap = {
+    'A+': 4.0,
+    'A': 4.0,
+    'B+': 3.5,
+    'B': 3.0,
+    'C+': 2.5,
+    'C': 2.0,
+    'D+': 1.5,
+    'D': 1.0,
+    'F': 0.0
+  };
+
+  function updateScore(rowIndex){
+    const diemChuInput = document.querySelectorAll(`#diem_chu_${rowIndex}`)[0];
+    const diemSoInput = document.querySelectorAll(`#diem_so_${rowIndex}`)[0];
+
+    const diemChu = diemChuInput.value.toUpperCase();
+    if(gradeMap.hasOwnProperty(diemChu)){
+      diemSoInput.value = gradeMap[diemChu];
+    } else {
+      diemSoInput.value = '';
+    }
+  }
+</script>
