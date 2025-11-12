@@ -37,7 +37,9 @@ const lopRouter = require('./routes/lop');
 const khoaRouter = require('./routes/khoa');
 const monhocRouter = require('./routes/monhoc');
 const diemRouter = require('./routes/diem');
+const rolesRouter = require('./routes/roles');
 
+app.use('/roles', rolesRouter);
 app.use('/user', userRouter);
 app.use('/sinhvien', sinhvienRouter);
 app.use('/lop', lopRouter);
@@ -72,6 +74,10 @@ app.get('/monhoc', (req, res) => {
 
 app.get('/diem', (req, res) => {
   res.render('diem', { title: 'Quản lý điểm', scores: [] });
+});
+
+app.get('/roles', (req, res) => {
+  res.render('roles', { title: 'Quản lý vai trò', users: [] });
 });
 
 const PORT = 3000;

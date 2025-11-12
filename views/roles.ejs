@@ -1,0 +1,30 @@
+
+    <h2>Danh sách vai trò</h2>
+
+    <table class="table table-striped table-bordered">
+        <thead class="table-primary">
+            <tr>
+                <th>ID</th>
+                <th>Tên người dùng</th>
+                <th>Vai trò</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% users.forEach(u => { %>
+                <tr>
+                <td><%= u.id %></td>
+                <td><%= u.username %></td>
+                <td>
+                    <form action="/roles/update/<%= u.id %>" method="POST">
+                    <select name="role">
+                        <option value="admin" <%= u.role === 'admin' ? 'selected' : '' %>>Admin</option>
+                        <option value="giangvien" <%= u.role === 'giangvien' ? 'selected' : '' %>>Giảng viên</option>
+                        <option value="sinhvien" <%= u.role === 'sinhvien' ? 'selected' : '' %>>Sinh viên</option>
+                    </select>
+                    <button type="submit">Cập nhật</button>
+                    </form>
+                </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
