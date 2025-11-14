@@ -1,11 +1,83 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db');
+const XLSX = require('xlsx');
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
 
 function isLoggedIn(req, res, next) {
   if (req.session.user) return next();
   res.redirect('/user/login');
 }
+
+// Xuất danh sách sinh viên ra file Excel
+router.get('/export', isLoggedIn, (req, res) => {
+  const sql = `
+    SELECT sv.ma_sv as 'MSSV', sv.ho_ten as 'Họ tên', sv.ngay_sinh as 'Ngày sinh', sv.gioi_tinh as 'Giới tính', sv.dia_chi as 'Địa chỉ', sv.so_dien_thoai as 'Số điện thoại', sv.email as 'Email', l.ten_lop as 'Tên lớp'
+    FROM sinhvien sv
+    LEFT JOIN lop l ON sv.ma_lop = l.ma_lop
+    ORDER BY sv.ma_sv ASC
+  `;
+  db.query(sql, (err, results) => {
+    if (err){
+      console.error('❌ Lỗi truy vấn SQL:', err);
+      return res.status(500).send('Error querying database');
+    }
+
+    if (results.length === 0) {
+      return res.status(404).send('No data to export');
+    }
+    
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet(results);
+
+    ws['!cols'] = [
+      { wch: 10 }, // Mã sinh viên
+      { wch: 25 }, // Họ tên
+      { wch: 15 }, // Ngày sinh
+      { wch: 10 }, // Giới tính
+      { wch: 30 }, // Địa chỉ
+      { wch: 15 }, // Số điện thoại
+      { wch: 30 }, // Email
+      { wch: 20 }  // Tên lớp
+    ];
+
+    XLSX.utils.book_append_sheet(wb, ws, 'SinhVien');
+
+    const buffer = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
+
+    res.setHeader('Content-Disposition', 'attachment; filename="sinhvien.xlsx"');
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.send(buffer);
+  });
+});
+
+router.post('/import', isLoggedIn, upload.single('excelFile'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).send('No file uploaded');
+  }
+
+  const workbook = XLSX.readFile(req.file.path);
+  const sheet = workbook.Sheets[workbook.SheetNames[0]];
+  const data = XLSX.utils.sheet_to_json(sheet);
+
+  const sql = `
+    INSERT INTO sinhvien (ma_sv, ho_ten, ma_lop)
+    VALUES (?, ?, ?)
+    ON DUPLICATE KEY UPDATE ho_ten = VALUES(ho_ten), ma_lop = VALUES(ma_lop)
+  `;
+
+  data.forEach((row) => {
+    const { ma_sv, ho_ten, ma_lop } = row;
+    db.query(sql, [ma_sv, ho_ten, ma_lop], (err) => {
+      if (err) {
+        // console.error('❌ Lỗi chèn dữ liệu từ Excel:', err);
+      }
+    });
+  });
+
+  res.redirect('/sinhvien');
+});
 
 // Hiển thị danh sách sinh viên
 router.get('/', isLoggedIn, (req, res) => {
