@@ -51,20 +51,9 @@
         <div class="card p-3">
           <%- body %>
 
-          <% if (message) { %>
-            <div id="toast-message"><%= message %></div>
-          <% } %>
+          
 
-          <script>
-            const toast = document.getElementById("toast-message");
-            if (toast) {
-              setTimeout(() => {
-                toast.style.opacity = "0";
-                toast.style.transform = "translateY(-20px)";
-                setTimeout(() => toast.remove(), 500); // Xoá hẳn sau khi mờ dần
-              }, 1500); // Hiện 1.5 giây
-            }
-          </script>
+          
         </div>
       </main>
 

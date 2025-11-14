@@ -1,5 +1,8 @@
-
     <h2>Danh sách vai trò</h2>
+
+    <% if (message) { %>
+        <div id="toast-message"><%= message %></div>
+    <% } %>
 
     <table class="table table-striped table-bordered">
         <thead class="table-primary">
@@ -28,3 +31,14 @@
             <% }) %>
         </tbody>
     </table>
+
+<script>
+    const toast = document.getElementById("toast-message");
+        if (toast) {
+            setTimeout(() => {
+            toast.style.opacity = "0";
+            toast.style.transform = "translateY(-20px)";
+            setTimeout(() => toast.remove(), 500); // Xoá hẳn sau khi mờ dần
+            }, 1500); // Hiện 1.5 giây
+        }
+</script>

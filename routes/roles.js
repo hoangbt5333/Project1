@@ -27,7 +27,7 @@ router.get('/', isAdmin, (req, res) => {
     // console.log('✅ Kết quả truy vấn users:', results);
     const message = req.session.message;
     delete req.session.message;
-    res.render('roles', { title: 'Quản lý vai trò', users: results, user: req.session.user, message});
+    res.render('roles', { title: 'Quản lý vai trò', users: results, user: req.session.user, message: message || null});
   });
 });
 

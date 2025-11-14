@@ -126,7 +126,7 @@ html, body {
 
 #toast-message {
   position: fixed;
-  top: 20px;
+  top: 80px;
   right: 20px;
   background-color: #28a745; /* màu xanh cho thành công */
   color: white;
