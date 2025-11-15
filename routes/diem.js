@@ -7,6 +7,11 @@ function isLoggedIn(req, res, next) {
   res.redirect('/user/login');
 }
 
+function isGiangVien(req, res, next) {
+  if (req.session.user && req.session.user.role === 'giangvien') return next();
+  res.render('access_denied', { title: 'Access Denied', message: 'Bạn không có quyền truy cập trang này.' });
+}
+
 // Hiển thị danh sách điểm
 router.get('/', isLoggedIn, (req, res) => {
   const search = (req.query.search || '').trim();
@@ -57,7 +62,7 @@ router.get('/', isLoggedIn, (req, res) => {
 });
 
 // Hiển thị form nhập điểm
-router.get("/add", (req, res) => {
+router.get("/add",isGiangVien, (req, res) => {
   const maMonHoc = req.query.ma_mon_hoc || null;
   const sqlMon = "SELECT * FROM monhoc";
 
@@ -87,7 +92,7 @@ router.get("/add", (req, res) => {
 });
 
 //Xử lý lấy sinh viên theo môn học
-router.post("/add", (req, res) => {
+router.post("/add",isGiangVien, (req, res) => {
   const maMonHoc = req.body.ma_mon_hoc;
   const sinhvienList = req.body.sinhvien; // { ma_sv: [..], diem_so: [..], diem_chu: [..] }
 
@@ -114,7 +119,7 @@ router.post("/add", (req, res) => {
 
 
 // Xử lý lưu điểm
-router.post("/save", (req, res) => {
+router.post("/save",isGiangVien, (req, res) => {
   const { ma_mon_hoc, diem } = req.body;
 
   const sqlUpsert = `

@@ -1,11 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db');
-
-function isLoggedIn(req, res, next) {
-  if (req.session.user) return next();
-  res.redirect('/user/login');
-}
+const { isLoggedIn, isAdmin } = require('../middleware/auth');
 
 // Hiển thị danh sách môn học
 router.get('/', isLoggedIn, (req, res) => {
@@ -19,7 +15,7 @@ router.get('/', isLoggedIn, (req, res) => {
 });
 
 // Hiển thị form thêm môn học
-router.get('/add', isLoggedIn, (req, res) => {
+router.get('/add', isAdmin, (req, res) => {
   const sqlKhoa = `
     SELECT * FROM khoa
   `;
@@ -30,7 +26,7 @@ router.get('/add', isLoggedIn, (req, res) => {
 });
 
 // Thêm môn học mới
-router.post('/add', isLoggedIn, (req, res) => {
+router.post('/add', isAdmin, (req, res) => {
   const { ma_mon_hoc, ten_mon_hoc, ma_khoa, tin_chi } = req.body;
 
   const sql = `
@@ -44,7 +40,7 @@ router.post('/add', isLoggedIn, (req, res) => {
 });
 
 // Hiển thị form sửa môn học
-router.get('/edit/:ma_mon_hoc', isLoggedIn, (req, res) => {
+router.get('/edit/:ma_mon_hoc', isAdmin, (req, res) => {
   const ma_mon_hoc = req.params.ma_mon_hoc;
 
   const sql = `
@@ -64,7 +60,7 @@ router.get('/edit/:ma_mon_hoc', isLoggedIn, (req, res) => {
   });
 });
 // Cập nhật môn học
-router.post('/edit/:ma_mon_hoc', isLoggedIn, (req, res) => {
+router.post('/edit/:ma_mon_hoc', isAdmin, (req, res) => {
   const ma_mon_hoc = req.params.ma_mon_hoc;
   const { ma_mon_hoc: new_ma_mon_hoc, ten_mon_hoc, ma_khoa, tin_chi } = req.body;
   const sql = `
@@ -79,7 +75,7 @@ router.post('/edit/:ma_mon_hoc', isLoggedIn, (req, res) => {
 });
 
 // Xóa môn học
-router.post('/delete/:ma_mon_hoc', isLoggedIn, (req, res) => {
+router.post('/delete/:ma_mon_hoc', isAdmin, (req, res) => {
   const ma_mon_hoc = req.params.ma_mon_hoc;
 
   const sql = `

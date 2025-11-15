@@ -1,16 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db');
-
-function isLoggedIn(req, res, next) {
-  if (req.session.user) return next();
-  res.redirect('/user/login');
-}
-
-function isAdmin(req, res, next) {
-  if (req.session.user && req.session.user.role === 'admin') return next();
-  res.status(403).send('Access denied');
-}
+const { isAdmin } = require('../middleware/auth');
 
 router.get('/', isAdmin, (req, res) => {
   const sql = `

@@ -53,7 +53,8 @@ router.post('/login', (req, res) => {
       req.session.user = user;
       res.redirect('/');
     } else {
-      res.send('Sai tên đăng nhập hoặc mật khẩu.');
+      // res.send('Sai tên đăng nhập hoặc mật khẩu.');
+      res.render('access_denied', { title: 'Đăng nhập', message: 'Sai tên đăng nhập hoặc mật khẩu.' });
     }
   });
 });

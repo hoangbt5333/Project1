@@ -1,11 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db');
-
-function isLoggedIn(req, res, next) {
-  if (req.session.user) return next();
-  res.redirect('/user/login');
-}
+const { isLoggedIn, isAdmin } = require('../middleware/auth');
 
 // Hiển thị danh sách lớp
 router.get('/', isLoggedIn, (req, res) => {
@@ -23,7 +19,7 @@ router.get('/', isLoggedIn, (req, res) => {
 });
 
 // Hiển thị form thêm lớp
-router.get('/add', isLoggedIn, (req, res) => {
+router.get('/add', isAdmin, (req, res) => {
   const sqlKhoa = `
     SELECT * FROM khoa
   `;
@@ -38,7 +34,7 @@ router.get('/add', isLoggedIn, (req, res) => {
 });
 
 // Thêm lớp mới
-router.post('/add', isLoggedIn, (req, res) => {
+router.post('/add', isAdmin, (req, res) => {
   const { ma_lop, ten_lop, ma_khoa } = req.body;
 
   const sql = `
@@ -56,7 +52,7 @@ router.post('/add', isLoggedIn, (req, res) => {
 });
 
 // Hiển thị form sửa lớp
-router.get('/edit/:ma_lop', isLoggedIn, (req, res) => {
+router.get('/edit/:ma_lop', isAdmin, (req, res) => {
   const ma_lop = req.params.ma_lop;
 
   const sqlLop = `
@@ -85,7 +81,7 @@ router.get('/edit/:ma_lop', isLoggedIn, (req, res) => {
   });
 });
 // Cập nhật thông tin lớp
-router.post('/edit/:ma_lop', isLoggedIn, (req, res) => {
+router.post('/edit/:ma_lop', isAdmin, (req, res) => {
   const ma_lop = req.params.ma_lop;
   const { ten_lop, ma_khoa } = req.body;
   const sql = `
@@ -100,7 +96,7 @@ router.post('/edit/:ma_lop', isLoggedIn, (req, res) => {
   });
 });
 // Xóa lớp
-router.get('/delete/:ma_lop', isLoggedIn, (req, res) => {
+router.get('/delete/:ma_lop', isAdmin, (req, res) => {
   const ma_lop = req.params.ma_lop;
   const sql = `
     DELETE FROM lop WHERE ma_lop = ?

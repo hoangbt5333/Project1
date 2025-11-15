@@ -4,11 +4,9 @@ const db = require('../db');
 const XLSX = require('xlsx');
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
+const { isLoggedIn, isAdmin, isGiangVien } = require('../middleware/auth');
 
-function isLoggedIn(req, res, next) {
-  if (req.session.user) return next();
-  res.redirect('/user/login');
-}
+
 
 // Xuất danh sách sinh viên ra file Excel
 router.get('/export', isLoggedIn, (req, res) => {
@@ -52,7 +50,7 @@ router.get('/export', isLoggedIn, (req, res) => {
   });
 });
 
-router.post('/import', isLoggedIn, upload.single('excelFile'), (req, res) => {
+router.post('/import', isAdmin, isGiangVien, upload.single('excelFile'), (req, res) => {
   if (!req.file) {
     return res.status(400).send('No file uploaded');
   }
@@ -103,7 +101,7 @@ router.get('/', isLoggedIn, (req, res) => {
 });
 
 // Hiển thị form thêm sinh viên
-router.get('/add', isLoggedIn, (req, res) => {
+router.get('/add', isAdmin, isGiangVien, (req, res) => {
   const sqlLop = `
     SELECT * FROM lop
   `;
@@ -118,7 +116,7 @@ router.get('/add', isLoggedIn, (req, res) => {
 });
 
 // Thêm sinh viên mới
-router.post('/add', isLoggedIn, (req, res) => {
+router.post('/add', isAdmin, isGiangVien, (req, res) => {
   const { ma_sv, ho_ten, ma_lop } = req.body;
 
   const sqlInsert = `
@@ -136,7 +134,7 @@ router.post('/add', isLoggedIn, (req, res) => {
 });
 
 // Hiển thị form sửa sinh viên
-router.get('/edit/:ma_sv', isLoggedIn, (req, res) => {
+router.get('/edit/:ma_sv', isAdmin, isGiangVien, (req, res) => {
   const ma_sv = req.params.ma_sv;
 
   const sqlSV = `
@@ -165,7 +163,7 @@ router.get('/edit/:ma_sv', isLoggedIn, (req, res) => {
   });
 });
 // Cập nhật thông tin sinh viên
-router.post('/edit/:ma_sv', isLoggedIn, (req, res) => {
+router.post('/edit/:ma_sv', isAdmin, isGiangVien, (req, res) => {
   const ma_sv = req.params.ma_sv;
   const { ho_ten, ngay_sinh, gioi_tinh, dia_chi, email, so_dien_thoai, ma_lop } = req.body;
   const sql = `
@@ -213,7 +211,7 @@ router.get('/view/:ma_sv', (req, res) => {
 
 
 // Xóa sinh viên
-router.post('/delete/:ma_sv', isLoggedIn, (req, res) => {
+router.post('/delete/:ma_sv', isAdmin, isGiangVien, (req, res) => {
   const ma_sv = req.params.ma_sv;
 
   const sql = `
