@@ -13,4 +13,9 @@ function isGiangVien(req, res, next) {
   res.render('access_denied', { title: 'Access Denied', message: 'Bạn không có quyền truy cập trang này.' });
 }
 
-module.exports = { isLoggedIn, isAdmin, isGiangVien };
+function isAdminOrGiangVien(req, res, next) {
+  if (req.session.user && (req.session.user.role === 'admin' || req.session.user.role === 'giangvien')) return next();
+  res.render('access_denied', { title: 'Access Denied', message: 'Bạn không có quyền truy cập trang này.' });
+}
+
+module.exports = { isLoggedIn, isAdmin, isGiangVien, isAdminOrGiangVien };
