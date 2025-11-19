@@ -1,5 +1,10 @@
 <!-- <% if (user) { %>Xin chào, <%= user.username %><% } %> -->
   <h2>Danh sách sinh viên</h2>
+
+  <% if (message) { %>
+    <div id="toast-message"><%= message %></div>
+  <% } %>
+
   <div class="d-flex justify-content-between align-items-center mb-3">
     
     <form action="/sinhvien" method="GET" class="d-flex">
@@ -59,3 +64,14 @@
       <% }) %>
     </tbody>
   </table>
+
+<script>
+    const toast = document.getElementById("toast-message");
+        if (toast) {
+            setTimeout(() => {
+            toast.style.opacity = "0";
+            toast.style.transform = "translateY(-20px)";
+            setTimeout(() => toast.remove(), 500); // Xoá hẳn sau khi mờ dần
+            }, 1500); // Hiện 1.5 giây
+        }
+</script>

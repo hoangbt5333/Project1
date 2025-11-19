@@ -6,8 +6,6 @@ const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
 const { isLoggedIn, isAdminOrGiangVien } = require('../middleware/auth');
 
-
-
 // Xuất danh sách sinh viên ra file Excel
 router.get('/export', isLoggedIn, (req, res) => {
   const sql = `
@@ -50,6 +48,7 @@ router.get('/export', isLoggedIn, (req, res) => {
   });
 });
 
+// Nhập danh sách sinh viên từ file Excel
 router.post('/import', isAdminOrGiangVien, upload.single('excelFile'), (req, res) => {
   if (!req.file) {
     return res.status(400).send('No file uploaded');
@@ -69,11 +68,12 @@ router.post('/import', isAdminOrGiangVien, upload.single('excelFile'), (req, res
     const { ma_sv, ho_ten, ma_lop } = row;
     db.query(sql, [ma_sv, ho_ten, ma_lop], (err) => {
       if (err) {
-        // console.error('❌ Lỗi chèn dữ liệu từ Excel:', err);
+        req.session.message = '⚠️ Lỗi chèn dữ liệu từ Excel';
+        console.error('❌ Lỗi chèn dữ liệu từ Excel:', err);
       }
     });
   });
-
+  req.session.message = '✅ Dữ liệu từ Excel đã được nhập thành công';
   res.redirect('/sinhvien');
 });
 
@@ -90,13 +90,15 @@ router.get('/', isLoggedIn, (req, res) => {
     `;
 
   const params = keyword ? [`%${keyword}%`, `%${keyword}%`] : [];
+  const message = req.session.message;
+  // delete req.session.message;
 
   db.query(sql, params, (err, results) => {
     if (err){
       // console.error('❌ Lỗi truy vấn SQL:', err);
       return res.status(500).send('Error querying database');
     }
-    res.render('sinhvien', { title: 'Quản lý sinh viên', students: results, keyword : keyword});
+    res.render('sinhvien', { title: 'Quản lý sinh viên', students: results, keyword : keyword, message: message || null});
   });
 });
 
@@ -106,12 +108,13 @@ router.get('/add', isAdminOrGiangVien, (req, res) => {
     SELECT * FROM lop
   `;
 
+  const message = req.session.message;
   db.query(sqlLop, (err, lopList) => {
     if (err) {
       // console.error('❌ Lỗi truy vấn SQL:', err);
       return res.status(500).send('Error querying database');
     }
-    res.render('sinhvien_add', { title: 'Thêm sinh viên', lopList: lopList });
+    res.render('sinhvien_add', { title: 'Thêm sinh viên', lopList: lopList, message: message || null });
   });
 });
 
@@ -129,6 +132,7 @@ router.post('/add', isAdminOrGiangVien, (req, res) => {
       // console.error('❌ Lỗi truy vấn SQL:', err);
       return res.status(500).send('Error inserting data');
     }
+    req.session.message = '✅ Thêm sinh viên thành công';
     res.redirect('/sinhvien');
   });
 });
@@ -145,6 +149,8 @@ router.get('/edit/:ma_sv', isAdminOrGiangVien, (req, res) => {
     SELECT * FROM lop
   `
 
+  const message = req.session.message;
+  
   db.query(sqlSV, [ma_sv], (err, results) => {
     if (err) {
       // console.error('❌ Lỗi truy vấn SQL:', err);
@@ -158,7 +164,7 @@ router.get('/edit/:ma_sv', isAdminOrGiangVien, (req, res) => {
         // console.error('❌ Lỗi truy vấn SQL:', err);
         return res.status(500).send('Error querying database');
       }
-      res.render('sinhvien_edit', { title: 'Sửa sinh viên', students: results[0], lopList: lopList });
+      res.render('sinhvien_edit', { title: 'Sửa sinh viên', students: results[0], lopList: lopList, message: message || null });
     });
   });
 });
@@ -177,6 +183,7 @@ router.post('/edit/:ma_sv', isAdminOrGiangVien, (req, res) => {
       // console.error('❌ Lỗi truy vấn SQL:', err);
       return res.status(500).send('Error updating data');
     }
+    req.session.message = '✅ Cập nhật sinh viên thành công';
     res.redirect('/sinhvien');
   });
 });
@@ -223,6 +230,7 @@ router.post('/delete/:ma_sv', isAdminOrGiangVien, (req, res) => {
       // console.error('❌ Lỗi truy vấn SQL:', err);
       return res.status(500).send('Error deleting data');
     }
+    req.session.message = '✅ Xóa sinh viên thành công';
     res.redirect('/sinhvien');
   });
 });

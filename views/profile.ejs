@@ -1,0 +1,49 @@
+<% if (message) { %>
+  <div id="toast-message">
+    <%= message %>
+  </div>
+<% } %>
+
+<form action="/profile" method="POST" class="card p-4 shadow-sm">
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <label class="form-label">Email (tài khoản đăng nhập)</label>
+      <input type="email" class="form-control" value="<%= profile.email || user && user.email || '' %>">
+    </div>
+
+    <div class="col-md-6 mb-3">
+      <label class="form-label">Họ tên</label>
+      <input type="text" name="ho_ten" class="form-control" value="<%= profile.ho_ten || '' %>" required>
+    </div>
+
+    <div class="col-md-6 mb-3">
+      <label class="form-label">Ngày sinh</label>
+      <input 
+        type="date" 
+        name="ngay_sinh" 
+        class="form-control" 
+        value="<%= profile.ngay_sinh ? profile.ngay_sinh.toISOString().split('T')[0] : '' %>">
+    </div>
+
+    <div class="col-md-6 mb-3">
+      <label class="form-label">Giới tính</label>
+      <select name="gioi_tinh" class="form-select">
+        <option value="">-- Chọn giới tính --</option>
+        <option value="Nam" <%= profile.gioi_tinh === 'Nam' ? 'selected' : '' %>>Nam</option>
+        <option value="Nữ" <%= profile.gioi_tinh === 'Nữ' ? 'selected' : '' %>>Nữ</option>
+      </select>
+    </div>
+
+    <div class="col-md-12 mb-3">
+      <label class="form-label">Địa chỉ</label>
+      <input type="text" name="dia_chi" class="form-control" value="<%= profile.dia_chi || '' %>">
+    </div>
+
+    <div class="col-md-6 mb-3">
+      <label class="form-label">Số điện thoại</label>
+      <input type="text" name="so_dien_thoai" class="form-control" value="<%= profile.so_dien_thoai || '' %>">
+    </div>
+  </div>
+
+  <button type="submit" class="btn btn-primary mt-3">Lưu thay đổi</button>
+</form>

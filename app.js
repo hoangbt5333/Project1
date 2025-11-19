@@ -28,9 +28,6 @@ app.use((req, res, next) => {
   next();
 });
 
-
-
-
 const userRouter = require('./routes/user');
 const sinhvienRouter = require('./routes/sinhvien');
 const lopRouter = require('./routes/lop');
@@ -38,6 +35,9 @@ const khoaRouter = require('./routes/khoa');
 const monhocRouter = require('./routes/monhoc');
 const diemRouter = require('./routes/diem');
 const rolesRouter = require('./routes/roles');
+const profileRouter = require('./routes/profile');
+
+app.use('/profile', profileRouter);
 
 app.use('/roles', rolesRouter);
 app.use('/user', userRouter);
@@ -79,6 +79,7 @@ app.get('/diem', (req, res) => {
 app.get('/roles', (req, res) => {
   res.render('roles', { title: 'Quản lý vai trò', users: [] });
 });
+
 
 const PORT = 3000;
 app.listen(PORT, () => {
