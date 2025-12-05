@@ -91,7 +91,7 @@ router.get('/', isLoggedIn, (req, res) => {
 
   const params = keyword ? [`%${keyword}%`, `%${keyword}%`] : [];
   const message = req.session.message;
-  // delete req.session.message;
+  delete req.session.message;
 
   db.query(sql, params, (err, results) => {
     if (err){

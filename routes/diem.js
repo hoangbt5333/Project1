@@ -1,16 +1,68 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db');
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
+const xlsx = require('xlsx');
+const { isLoggedIn, isAdminOrGiangVien } = require('../middleware/auth');
 
-function isLoggedIn(req, res, next) {
-  if (req.session.user) return next();
-  res.redirect('/user/login');
-}
 
-function isGiangVien(req, res, next) {
-  if (req.session.user && req.session.user.role === 'giangvien') return next();
-  res.render('access_denied', { title: 'Access Denied', message: 'Bạn không có quyền truy cập trang này.' });
-}
+// Xuât điểm
+router.get('/export', isAdminOrGiangVien, (req, res) => {
+  const sql = 'SELECT * FROM diem_view_vn ORDER BY MSSV ASC';
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error('❌ Lỗi truy vấn SQL:', err);
+      return res.status(500).send('Error querying database');
+    }
+    const worksheet = xlsx.utils.json_to_sheet(results);
+    const workbook = xlsx.utils.book_new();
+
+    worksheet['!cols'] = [
+      { wch: 10 }, // MSSV
+      { wch: 25 }, // Họ tên
+      { wch: 10 }, // Học kỳ
+      { wch: 30 }, // Môn học
+      { wch: 10 }, // Điểm chữ
+      { wch: 10 }  // Điểm số
+    ];
+
+    xlsx.utils.book_append_sheet(workbook, worksheet, 'Diem');
+
+    const buffer = xlsx.write(workbook, { type: 'buffer', bookType: 'xlsx' });
+
+    res.setHeader('Content-Disposition', 'attachment; filename="diem.xlsx"');
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.send(buffer);
+  });
+});
+
+// Nhập điểm
+router.post('/import', isAdminOrGiangVien, upload.single('excelFile'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).send('No file uploaded');
+  }
+  const workbook = xlsx.readFile(req.file.path);
+  const sheet = workbook.Sheets[workbook.SheetNames[0]];
+  const data = xlsx.utils.sheet_to_json(sheet);
+
+  const sqlUpsert = `
+    INSERT INTO diem (ma_sv, ma_mon_hoc, hoc_ky, diem_chu, diem_so)
+    VALUES (?, ?, ?, ?, ?)
+    ON DUPLICATE KEY UPDATE hoc_ky = VALUES(hoc_ky), diem_chu = VALUES(diem_chu), diem_so = VALUES(diem_so)
+  `;
+
+  data.forEach((row) => {
+    db.query(sqlUpsert, [row.ma_sv, row.ma_mon_hoc, row.hoc_ky, row.diem_chu, row.diem_so], (err) => {
+      if (err) {
+        console.error('❌ Lỗi khi nhập điểm:', err);
+        req.session.message = '⚠️ Lỗi chèn dữ liệu từ Excel';
+      }
+    });
+  });
+  req.session.message = '✅ Dữ liệu từ Excel đã được nhập thành công';
+  res.redirect('/diem');
+});
 
 // Hiển thị danh sách điểm
 router.get('/', isLoggedIn, (req, res) => {
@@ -37,7 +89,7 @@ router.get('/', isLoggedIn, (req, res) => {
 
   // Truy vấn danh sách môn học
   const sqlMonHoc = 'SELECT ten_mon_hoc FROM monhoc ORDER BY ten_mon_hoc ASC';
-
+  const message = req.session.message;
   db.query(sqlMonHoc, (err, monhocList) => {
     if (err) {
       console.error('❌ Lỗi lấy danh sách môn học:', err);
@@ -55,16 +107,19 @@ router.get('/', isLoggedIn, (req, res) => {
         scores: results,
         search,
         monhoc: monhoc,
-        monhocList
+        monhocList,
+        message: message || null
       });
     });
   });
 });
 
 // Hiển thị form nhập điểm
-router.get("/add",isGiangVien, (req, res) => {
+router.get("/add",isAdminOrGiangVien, (req, res) => {
   const maMonHoc = req.query.ma_mon_hoc || null;
   const sqlMon = "SELECT * FROM monhoc";
+  const message = req.session.message;
+  delete req.session.message;
 
   // Lấy danh sách môn học trước
   db.query(sqlMon, (err, monhocList) => {
@@ -72,7 +127,7 @@ router.get("/add",isGiangVien, (req, res) => {
 
     if (!maMonHoc) {
       // Chưa chọn môn => chỉ hiển thị form chọn
-      return res.render("diem_add", { title: 'Thêm điểm', monhocList, sinhvienList: [], maMonHoc: null });
+      return res.render("diem_add", { title: 'Thêm điểm', monhocList, sinhvienList: [], maMonHoc: null, message: message || null });
     }
 
     // Nếu đã chọn môn => lấy danh sách sinh viên đăng ký
@@ -86,13 +141,13 @@ router.get("/add",isGiangVien, (req, res) => {
     `;
     db.query(sqlSV, [maMonHoc, maMonHoc], (err, sinhvienList) => {
       if (err) return res.status(500).send("Lỗi khi lấy danh sách sinh viên");
-      res.render("diem_add", { title: 'Thêm điểm', monhocList, sinhvienList, maMonHoc });
+      res.render("diem_add", { title: 'Thêm điểm', monhocList, sinhvienList, maMonHoc, message: message || null });
     });
   });
 });
 
 //Xử lý lấy sinh viên theo môn học
-router.post("/add",isGiangVien, (req, res) => {
+router.post("/add",isAdminOrGiangVien, (req, res) => {
   const maMonHoc = req.body.ma_mon_hoc;
   const sinhvienList = req.body.sinhvien; // { ma_sv: [..], diem_so: [..], diem_chu: [..] }
 
@@ -111,6 +166,7 @@ router.post("/add",isGiangVien, (req, res) => {
       if (err) console.error(err);
       count++;
       if (count === sinhvienList.length) {
+        req.session.message = '✅ Điểm đã được lưu thành công';
         res.redirect("/diem"); // sau khi lưu xong quay lại trang điểm
       }
     });
@@ -119,7 +175,7 @@ router.post("/add",isGiangVien, (req, res) => {
 
 
 // Xử lý lưu điểm
-router.post("/save",isGiangVien, (req, res) => {
+router.post("/save",isAdminOrGiangVien, (req, res) => {
   const { ma_mon_hoc, diem } = req.body;
 
   const sqlUpsert = `
@@ -134,6 +190,7 @@ router.post("/save",isGiangVien, (req, res) => {
       return res.status(500).send('Lỗi khi lưu điểm');
     }
     res.redirect(`/diem/add?ma_mon_hoc=${ma_mon_hoc}`);
+    req.session.message = '✅ Điểm đã được lưu thành công';
   });
 });
 

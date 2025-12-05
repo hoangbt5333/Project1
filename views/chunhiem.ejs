@@ -1,0 +1,101 @@
+<% if (message) { %>
+    <div id="toast-message"><%= message %></div>
+<% } %>
+
+<h2 class="mb-3">Danh sách giảng viên</h2>
+<table class="table table-bordered table-striped">
+  <thead>
+    <tr>
+      <th>Mã GV</th>
+      <th>Họ tên</th>
+      <th>Email</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% if (giangvienList.length === 0) { %>
+      <tr>
+        <td colspan="3" class="text-center">Chưa có giảng viên nào</td>
+      </tr>
+    <% } else { %>
+      <% giangvienList.forEach(gv => { %>
+        <tr>
+          <td><%= gv.ma_gv %></td>
+          <td><%= gv.ho_ten %></td>
+          <td><%= gv.email || '' %></td>
+        </tr>
+      <% }) %>
+    <% } %>
+  </tbody>
+</table>
+
+<hr>
+
+<h2 class="mb-3">Thêm phân công chủ nhiệm</h2>
+
+<form action="/chunhiem/add" method="POST" class="card p-3 mb-4">
+  <div class="row">
+    <div class="col-md-4 mb-3">
+      <label class="form-label">Giảng viên</label>
+      <select name="ma_gv" class="form-select" required>
+        <option value="">-- Chọn giảng viên --</option>
+        <% giangvienList.forEach(gv => { %>
+          <option value="<%= gv.ma_gv %>">
+            <%= gv.ma_gv %> - <%= gv.ho_ten %>
+          </option>
+        <% }) %>
+      </select>
+    </div>
+
+    <div class="col-md-4 mb-3">
+      <label class="form-label">Lớp</label>
+      <select name="ma_lop" class="form-select" required>
+        <option value="">-- Chọn lớp --</option>
+        <% lopList.forEach(l => { %>
+          <option value="<%= l.ma_lop %>">
+            <%= l.ten_lop %>
+          </option>
+        <% }) %>
+      </select>
+    </div>
+
+    <div class="col-md-2 mb-3">
+      <label class="form-label">Ngày bắt đầu</label>
+      <input type="date" name="time_start" class="form-control" required>
+    </div>
+
+    <div class="col-md-2 mb-3">
+      <label class="form-label">Ngày kết thúc</label>
+      <input type="date" name="time_end" class="form-control">
+    </div>
+  </div>
+
+  <button type="submit" class="btn btn-primary">Lưu phân công</button>
+</form>
+
+<h2 class="mb-3">Danh sách lớp đã phân công</h2>
+<table class="table table-bordered table-striped">
+  <thead>
+    <tr>
+      <th>Lớp</th>
+      <th>Giảng viên chủ nhiệm</th>
+      <th>Từ ngày</th>
+      <th>Đến ngày</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% if (chunhiemList.length === 0) { %>
+      <tr>
+        <td colspan="4" class="text-center">Chưa có phân công nào</td>
+      </tr>
+    <% } else { %>
+      <% chunhiemList.forEach(row => { %>
+        <tr>
+          <td><%= row.ten_lop %></td>
+          <td><%= row.ho_ten %></td>
+          <td><%= row.time_start %></td>
+          <td><%= row.time_end || '' %></td>
+        </tr>
+      <% }) %>
+    <% } %>
+  </tbody>
+</table>

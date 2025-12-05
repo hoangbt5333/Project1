@@ -36,6 +36,9 @@ const monhocRouter = require('./routes/monhoc');
 const diemRouter = require('./routes/diem');
 const rolesRouter = require('./routes/roles');
 const profileRouter = require('./routes/profile');
+const chunhiemRouter = require('./routes/chunhiem');
+
+app.use('/chunhiem', chunhiemRouter);
 
 app.use('/profile', profileRouter);
 
