@@ -31,3 +31,50 @@ Giao diá»‡n thÃ¢n thiá»‡n, dá»… má»Ÿ rá»™ng, phÃ¹ há»£p cho giÃ¡o viÃªn cÃ¡c cáº
 
 ## ðŸ§± Cáº¥u trÃºc thÆ° má»¥c
 
+---
+
+## Dashboard m?i & i?m danh th?ng minh
+
+- Trang ch? ?ã ??c nâng c?p v?i hero section, thông kê nhanh và bi?u ?? Chart.js (line, bar, doughnut).
+- QR ?i?m danh ??c sinh t? backend, hi?n th? tr?n trang và t? ??ng c?p nh?t l??t ?i?m danh t?i thi?.
+- Sinh viên ??c qu?t QR, g?i form ?i?m danh (không c?n ??ng nh?p) và h? th?ng t? ??ng c?p nh?t danh sách cho gi?ng viên.
+- Liên k?t sao chép nhanh (copy to clipboard) và toast tr?c quan, báo tr?ng thái sau khi thao tác.
+
+### T?o b?ng ph?c v? ?i?m danh
+
+```
+CREATE TABLE attendance_sessions (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
+  ma_lop VARCHAR(20),
+  ma_mon_hoc VARCHAR(20),
+  token VARCHAR(64) NOT NULL UNIQUE,
+  expired_at DATETIME,
+  created_by VARCHAR(100),
+  status ENUM('scheduled','closed','expired') DEFAULT 'scheduled',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE attendance_records (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  session_id INT NOT NULL,
+  ma_sv VARCHAR(50) NOT NULL,
+  ho_ten VARCHAR(255),
+  ghi_chu TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_session FOREIGN KEY (session_id) REFERENCES attendance_sessions(id) ON DELETE CASCADE,
+  UNIQUE KEY uniq_session_student (session_id, ma_sv)
+);
+```
+
+> Tip: Thi?t l?p bi?n môi tr??ng `APP_BASE_URL` n?u deploy (VD: `https://quanlysinhvien.myuniversity.edu`) ?? QR sinh ra ??ng chính domain.
+
+
+## Giao di?n Tailwind m?i
+- Giao di?n dã chuy?n sang Tailwind CSS qua CDN (không còn dùng Bootstrap).
+- Các view dã du?c vi?t l?i b?ng utility class Tailwind; CSS tùy ch?nh n?m t?i `public/css/style.css` cho hi?u ?ng ph? tr? (sidebar, toast, glass).
+- Không c?n build bu?c Tailwind; ch? c?n ch?y server nhu bình thu?ng.
+
+## C?u hình môi tru?ng
+- Sao chép `.env.example` thành `.env` và c?p nh?t thông tin DB, `SESSION_SECRET`.
+- File `.env` và thu m?c `uploads/` dã du?c thêm vào `.gitignore` d? tránh l? d? li?u.

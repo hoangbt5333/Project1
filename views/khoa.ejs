@@ -1,46 +1,73 @@
-<% if (user) { %>Xin chào, <%= user.username %><% } %>
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <p class="text-xs uppercase tracking-[0.3em] text-slate-400 font-semibold">Khoa</p>
+      <h2 class="text-2xl font-bold text-slate-800">Danh sách khoa</h2>
+    </div>
 
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>Danh sách khoa</h2>
-    <button class="btn btn-primary" onclick="window.location.href='/khoa/add'"><i class="fa-solid fa-plus"></i> Thêm khoa</button>
+    <div class="flex items-center gap-3">
+      <a href="/khoa/add" class="inline-flex items-center gap-2 px-4 py-2 bg-brand text-white font-semibold rounded-xl hover:bg-brand-soft transition">
+        <i class="fa-solid fa-plus"></i> Thêm khoa
+      </a>
+
+      <!-- Import/Export compact group -->
+      <!-- <div class="flex items-center gap-2 bg-white border border-slate-200 rounded-full px-3 py-1 shadow-sm">
+        <form action="/khoa/import" method="POST" enctype="multipart/form-data" class="m-0 p-0">
+          <input id="khoaExcelInput" name="excelFile" type="file" accept=".xlsx,.xls" class="hidden" onchange="this.form.submit()" />
+          <label for="khoaExcelInput"
+                 class="inline-flex items-center gap-2 px-3 py-2 text-sm font-semibold text-emerald-700 bg-emerald-50 rounded-lg hover:bg-emerald-100 cursor-pointer transition">
+            <i class="fa-solid fa-file-import"></i> Nhập
+          </label>
+        </form>
+
+        <form action="/khoa/export" method="GET" class="m-0 p-0">
+          <button type="submit"
+                  class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-200 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition">
+            <i class="fa-solid fa-file-export"></i> Xuất
+          </button>
+        </form>
+      </div> -->
+    </div>
   </div>
 
-  <table class="table table-striped table-bordered">
-    <thead class="table-primary">
-      <tr>
-        <th>STT</th>
-        <th>Mã khoa</th>
-        <th>Tên khoa</th>
-        <th>Trưởng khoa</th>
-        <th>Thao tác</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% if (departments.length === 0) { %>
-        <tr>
-          <td colspan="5" class="text-center">Không có dữ liệu</td>
-        </tr>
-      <% } else { %>
-      <% departments.forEach((department, index) => { %>
-        <tr>
-          <td><%= index + 1 %></td>
-          <td><%= department.ma_khoa %></td>
-          <td><%= department.ten_khoa %></td>
-          <td><%= department.truong_khoa %></td>
-          <td>
-            <form action="/khoa/edit/<%= department.ma_khoa %>" method="GET" class="d-inline">
-              <button type="submit" class="btn btn-sm btn-warning"><i class="fa-solid fa-pen"></i></button>
-            </form>
-            
-            <form action="/khoa/delete/<%= department.ma_khoa %>"
-               method="POST" class="d-inline" 
-               onsubmit="return confirm('Bạn có chắc chắn muốn xóa khoa này không?');"
-               >
-              <button type="submit" class="btn btn-sm btn-danger"><i class="fa-solid fa-trash"></i></button>
-            </form>
-          </td>
-        </tr>
-      <% }) %>
-      <% } %>
-    </tbody>
-  </table>
+  
+
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5">
+    <div class="overflow-x-auto table-scroll">
+      <table class="min-w-full text-left text-sm text-slate-700">
+        <thead class="table-head sticky top-0 z-20">
+          <tr class="bg-slate-50 text-xs uppercase text-slate-500 border-b border-slate-200">
+            <th class="px-4 py-3">STT</th>
+            <th class="px-4 py-3">Mã khoa</th>
+            <th class="px-4 py-3">Tên khoa</th>
+            <th class="px-4 py-3">Trưởng khoa</th>
+            <th class="px-4 py-3">Thao tác</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% if (departments.length === 0) { %>
+            <tr><td colspan="5" class="px-4 py-6 text-center text-slate-500">Không có dữ liệu.</td></tr>
+          <% } else { %>
+            <% departments.forEach((department, index) => { %>
+              <tr class="odd:bg-white even:bg-slate-100 hover:bg-gray-100 transition">
+                <td class="px-4 py-3"><%= index + 1 %></td>
+                <td class="px-4 py-3 font-semibold text-slate-800"><%= department.ma_khoa %></td>
+                <td class="px-4 py-3"><%= department.ten_khoa %></td>
+                <td class="px-4 py-3"><%= department.truong_khoa %></td>
+                <td class="px-4 py-3">
+                  <div class="flex items-center gap-2">
+                    <a href="/khoa/edit/<%= department.ma_khoa %>" class="px-3 py-2 text-xs font-semibold bg-amber-50 text-amber-700 rounded-lg hover:bg-amber-100 transition"><i class="fa-solid fa-pen"></i></a>
+                    <form action="/khoa/delete/<%= department.ma_khoa %>" method="POST" onsubmit="return confirm('Bạn chắc chắn xóa khoa này?');">
+                      <button type="submit" class="px-3 py-2 text-xs font-semibold bg-rose-50 text-rose-700 rounded-lg hover:bg-rose-100 transition"><i class="fa-solid fa-trash"></i></button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            <% }) %>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

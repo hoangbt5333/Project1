@@ -1,0 +1,121 @@
+<div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
+  <div>
+    <a href="/attendance" class="text-sm text-brand font-semibold hover:underline inline-flex items-center gap-2">
+      <i class="fa-solid fa-arrow-left-long"></i> Quay lại danh sách
+    </a>
+    <h2 class="text-2xl font-bold text-slate-800 mt-2"><%= session.title %></h2>
+    <p class="text-slate-500">Theo dõi lượt điểm danh và chia sẻ QR cho sinh viên.</p>
+  </div>
+  <form action="/attendance/session/<%= session.id %>/close" method="POST" class="inline">
+    <button class="px-4 py-2 rounded-xl font-semibold border border-slate-200 text-slate-700 hover:bg-slate-50 transition <%= session.status === 'closed' ? 'opacity-60 cursor-not-allowed' : '' %>" <%= session.status === 'closed' ? 'disabled' : '' %>>
+      <i class="fa-solid fa-lock mr-2"></i> Khóa phiên
+    </button>
+  </form>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+    <p class="text-xs uppercase tracking-[0.3em] text-slate-400 font-semibold mb-3">Thông tin</p>
+    <div class="space-y-3 text-sm text-slate-600">
+      <div>
+        <p class="font-semibold text-slate-800">Lớp</p>
+        <p><%= session.ten_lop || 'Tất cả' %></p>
+      </div>
+      <div>
+        <p class="font-semibold text-slate-800">Môn học</p>
+        <p><%= session.ten_mon_hoc || 'Chưa chọn' %></p>
+      </div>
+      <div>
+        <p class="font-semibold text-slate-800">Thời gian kết thúc</p>
+        <p><%= session.expired_at ? new Date(session.expired_at).toLocaleString('vi-VN') : 'Không giới hạn' %></p>
+      </div>
+      <div>
+        <p class="font-semibold text-slate-800 mb-2">Chia sẻ đường dẫn</p>
+        <div class="flex items-center gap-2">
+          <input type="text" readonly class="flex-1 px-3 py-2 border border-slate-200 rounded-xl bg-slate-50 text-sm" value="<%= shareUrl %>">
+          <button type="button" class="px-3 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 transition" data-copy="<%= shareUrl %>">
+            <i class="fa-regular fa-copy"></i>
+          </button>
+        </div>
+      </div>
+      <div class="text-center pt-2">
+        <p class="font-semibold text-slate-800 mb-2">QR Code</p>
+        <img src="<%= qr %>" alt="QR Code" class="w-48 h-48 object-contain mx-auto rounded-2xl bg-slate-50 border border-slate-100 p-3">
+      </div>
+    </div>
+  </div>
+
+  <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <p class="text-xs uppercase tracking-[0.3em] text-slate-400 font-semibold mb-1">Danh sách điểm danh</p>
+        <h5 class="text-lg font-semibold text-slate-800"><%= records.length %> lượt</h5>
+      </div>
+      <span class="text-sm text-slate-500">Tự động cập nhật mỗi 7 giây</span>
+    </div>
+    <div class="overflow-x-auto table-scroll">
+      <table class="min-w-full text-left text-sm text-slate-700">
+        <thead class="table-head">
+          <tr>
+            <th class="px-4 py-3">#</th>
+            <th class="px-4 py-3">MSSV</th>
+            <th class="px-4 py-3">Họ tên</th>
+            <th class="px-4 py-3">Ghi chú</th>
+            <th class="px-4 py-3">Thời gian</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100" data-records-root>
+          <% if (records.length === 0) { %>
+            <tr>
+              <td colspan="5" class="px-4 py-6 text-center text-slate-500">Chưa có sinh viên nào điểm danh.</td>
+            </tr>
+          <% } else { %>
+            <% records.forEach((record, index) => { %>
+              <tr>
+                <td class="px-4 py-3"><%= index + 1 %></td>
+                <td class="px-4 py-3 font-semibold"><%= record.ma_sv %></td>
+                <td class="px-4 py-3"><%= record.ho_ten %></td>
+                <td class="px-4 py-3 text-slate-500"><%= record.ghi_chu || '-' %></td>
+                <td class="px-4 py-3 text-slate-500"><%= new Date(record.created_at).toLocaleString('vi-VN') %></td>
+              </tr>
+            <% }) %>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    const root = document.querySelector('[data-records-root]');
+    const sessionId = <%= session.id %>;
+
+    async function refreshRecords() {
+      try {
+        const res = await fetch(`/attendance/session/${sessionId}/records.json`);
+        const data = await res.json();
+        if (!Array.isArray(data.records) || !root) return;
+
+        if (data.records.length === 0) {
+          root.innerHTML = '<tr><td colspan="5" class="px-4 py-6 text-center text-slate-500">Chưa có sinh viên nào điểm danh.</td></tr>';
+          return;
+        }
+
+        root.innerHTML = data.records.map((record, index) => `
+          <tr class="divide-y divide-slate-100">
+            <td class="px-4 py-3">${index + 1}</td>
+            <td class="px-4 py-3 font-semibold">${record.ma_sv || '-'}</td>
+            <td class="px-4 py-3">${record.ho_ten || '-'}</td>
+            <td class="px-4 py-3 text-slate-500">${record.ghi_chu || '-'}</td>
+            <td class="px-4 py-3 text-slate-500">${new Date(record.created_at).toLocaleString('vi-VN')}</td>
+          </tr>
+        `).join('');
+      } catch (error) {
+        console.error('Không thể cập nhật danh sách điểm danh:', error);
+      }
+    }
+
+    setInterval(refreshRecords, 7000);
+  })();
+</script>

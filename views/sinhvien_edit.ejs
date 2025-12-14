@@ -1,52 +1,48 @@
-<div class="d-flex justify-content-between align-items-center mb-3">
-  <h2>Sửa thông tin sinh viên</h2>
-  <a href="/sinhvien" class="btn btn-secondary"><i class="fa fa-arrow-left"></i> Quay lại</a>
+<div class="flex items-center justify-between mb-4">
+  <div>
+    <p class="text-xs uppercase tracking-[0.3em] text-slate-400 font-semibold">Sinh viên</p>
+    <h2 class="text-2xl font-bold text-slate-800">Sửa thông tin</h2>
+  </div>
+  <a href="/sinhvien" class="px-4 py-2 rounded-xl border border-slate-200 text-slate-700 font-semibold hover:bg-slate-50 transition"><i class="fa fa-arrow-left mr-2"></i> Quay lại</a>
 </div>
 
-<form action="/sinhvien/edit/<%= students.ma_sv %>" method="POST" class="card p-4 shadow-sm">
-  <div class="row">
-    <div class="col-md-6 mb-3">
-      <label class="form-label">Mã sinh viên</label>
-      <input type="text" class="form-control" value="<%= students.ma_sv %>" readonly>
+<form action="/sinhvien/edit/<%= students.ma_sv %>" method="POST" class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 space-y-4">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div>
+      <label class="block text-sm font-semibold text-slate-700 mb-1">Mã sinh viên</label>
+      <input type="text" value="<%= students.ma_sv %>" readonly class="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-100">
     </div>
-
-    <div class="col-md-6 mb-3">
-      <label class="form-label">Họ tên</label>
-      <input type="text" name="ho_ten" class="form-control" value="<%= students.ho_ten %>" required>
+    <div>
+      <label class="block text-sm font-semibold text-slate-700 mb-1">Họ tên</label>
+      <input type="text" name="ho_ten" value="<%= students.ho_ten %>" required class="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:ring-2 focus:ring-brand focus:border-brand">
     </div>
-
-    <div class="col-md-6 mb-3">
-      <label class="form-label">Ngày sinh</label>
-      <input type="date" name="ngay_sinh" class="form-control" value="<%= students.ngay_sinh ? students.ngay_sinh.toISOString().split('T')[0] : '' %>">
+    <div>
+      <label class="block text-sm font-semibold text-slate-700 mb-1">Ngày sinh</label>
+      <input type="date" name="ngay_sinh" value="<%= students.ngay_sinh ? students.ngay_sinh.toISOString().split('T')[0] : '' %>" class="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:ring-2 focus:ring-brand focus:border-brand">
     </div>
-
-    <div class="col-md-6 mb-3">
-      <label class="form-label">Giới tính</label>
-      <select name="gioi_tinh" class="form-select">
+    <div>
+      <label class="block text-sm font-semibold text-slate-700 mb-1">Giới tính</label>
+      <select name="gioi_tinh" class="w-full px-4 py-3 border border-slate-200 rounded-xl bg-white focus:ring-2 focus:ring-brand focus:border-brand">
         <option value="">-- Chọn giới tính --</option>
         <option value="Nam" <%= students.gioi_tinh === 'Nam' ? 'selected' : '' %>>Nam</option>
         <option value="Nữ" <%= students.gioi_tinh === 'Nữ' ? 'selected' : '' %>>Nữ</option>
       </select>
     </div>
-
-    <div class="col-md-12 mb-3">
-      <label class="form-label">Địa chỉ</label>
-      <input type="text" name="dia_chi" class="form-control" value="<%= students.dia_chi || '' %>">
+    <div class="md:col-span-2">
+      <label class="block text-sm font-semibold text-slate-700 mb-1">Địa chỉ</label>
+      <input type="text" name="dia_chi" value="<%= students.dia_chi || '' %>" class="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:ring-2 focus:ring-brand focus:border-brand">
     </div>
-
-    <div class="col-md-6 mb-3">
-      <label class="form-label">Email</label>
-      <input type="email" name="email" class="form-control" value="<%= students.email || '' %>">
+    <div>
+      <label class="block text-sm font-semibold text-slate-700 mb-1">Email</label>
+      <input type="email" name="email" value="<%= students.email || '' %>" class="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:ring-2 focus:ring-brand focus:border-brand">
     </div>
-
-    <div class="col-md-6 mb-3">
-      <label class="form-label">Số điện thoại</label>
-      <input type="text" name="so_dien_thoai" class="form-control" value="<%= students.so_dien_thoai || '' %>">
+    <div>
+      <label class="block text-sm font-semibold text-slate-700 mb-1">Số điện thoại</label>
+      <input type="text" name="so_dien_thoai" value="<%= students.so_dien_thoai || '' %>" class="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:ring-2 focus:ring-brand focus:border-brand">
     </div>
-
-    <div class="col-md-6 mb-3">
-      <label class="form-label">Lớp</label>
-      <select name="ma_lop" class="form-select" required>
+    <div>
+      <label class="block text-sm font-semibold text-slate-700 mb-1">Lớp</label>
+      <select name="ma_lop" required class="w-full px-4 py-3 border border-slate-200 rounded-xl bg-white focus:ring-2 focus:ring-brand focus:border-brand">
         <% lopList.forEach(l => { %>
           <option value="<%= l.ma_lop %>" <%= l.ma_lop === students.ma_lop ? 'selected' : '' %>><%= l.ten_lop %></option>
         <% }) %>
@@ -54,5 +50,5 @@
     </div>
   </div>
 
-  <button type="submit" class="btn btn-primary mt-3">Lưu thay đổi</button>
+  <button type="submit" class="px-5 py-3 bg-brand text-white font-semibold rounded-xl hover:bg-brand-soft transition">Lưu thay đổi</button>
 </form>

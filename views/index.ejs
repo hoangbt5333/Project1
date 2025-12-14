@@ -1,4 +1,129 @@
-<% if (user) { %>Xin chào, <%= user.username %><% } %>
+<section class="hero-bg rounded-3xl px-8 py-10 text-white shadow-2xl relative overflow-hidden">
+  <div class="absolute inset-0 bg-gradient-to-r from-white/5 via-white/0 to-white/10"></div>
+  <div class="relative grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+    <div class="space-y-4">
+      <p class="uppercase tracking-[0.35em] text-sm text-white/80">Nền tảng quản lý sinh viên</p>
+      <h1 class="text-4xl lg:text-5xl font-bold leading-tight">
+        Xin chào <span class="text-amber-300"><%= user ? user.username : 'bạn' %></span>,<br>
+        đây là trạng thái mới nhất của hệ thống.
+      </h1>
+      <p class="text-white/80 text-lg max-w-2xl">
+        Tổng hợp sinh viên, lớp học, điểm số và điểm danh theo thời gian thực. Khởi động buổi học bằng cách tạo QR điểm danh và theo dõi biểu đồ tức thì.
+      </p>
+      <div class="flex flex-wrap gap-3">
+        <a href="/attendance" class="inline-flex items-center gap-2 px-5 py-3 bg-white text-slate-900 font-semibold rounded-xl shadow hover:translate-y-[-1px] transition">
+          <i class="fa-solid fa-qrcode"></i> Mở điểm danh
+        </a>
+        <a href="/diem" class="inline-flex items-center gap-2 px-5 py-3 border border-white/60 text-white font-semibold rounded-xl hover:bg-white/10 transition">
+          <i class="fa-solid fa-chart-line"></i> Xem bảng điểm
+        </a>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 gap-4">
+      <div class="glass rounded-2xl p-5 text-slate-900">
+        <p class="text-sm text-slate-500 mb-1">Sinh viên đang theo dõi</p>
+        <p class="text-4xl font-bold"><%= stats.totalStudents %></p>
+        <p class="text-slate-500">Cập nhật hôm nay</p>
+      </div>
+      <div class="glass rounded-2xl p-5 text-slate-900">
+        <p class="text-sm text-slate-500 mb-1">Phiên điểm danh hôm nay</p>
+        <p class="text-3xl font-bold"><%= stats.todayAttendance %></p>
+        <p class="text-slate-500">Live</p>
+      </div>
+      <div class="glass rounded-2xl p-5 text-slate-900">
+        <p class="text-sm text-slate-500 mb-1">Lớp học</p>
+        <p class="text-3xl font-bold"><%= stats.totalClasses %></p>
+        <p class="text-slate-500">Đang quản lý</p>
+      </div>
+      <div class="glass rounded-2xl p-5 text-slate-900">
+        <p class="text-sm text-slate-500 mb-1">Môn học</p>
+        <p class="text-3xl font-bold"><%= stats.totalSubjects %></p>
+        <p class="text-slate-500">Trong kỳ</p>
+      </div>
+    </div>
+  </div>
+</section>
 
-  <p>can i help you</p>
-  <div class="user-info text-end">
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4">
+    <p class="text-slate-500 text-sm mb-1">Sinh viên</p>
+    <p class="text-3xl font-bold"><%= stats.totalStudents %></p>
+  </div>
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4">
+    <p class="text-slate-500 text-sm mb-1">Lớp học</p>
+    <p class="text-3xl font-bold"><%= stats.totalClasses %></p>
+  </div>
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4">
+    <p class="text-slate-500 text-sm mb-1">Môn học</p>
+    <p class="text-3xl font-bold"><%= stats.totalSubjects %></p>
+  </div>
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4">
+    <p class="text-slate-500 text-sm mb-1">Khoa</p>
+    <p class="text-3xl font-bold"><%= stats.totalDepartments %></p>
+  </div>
+</section>
+
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 lg:col-span-2">
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <p class="text-xs uppercase tracking-[0.2em] text-slate-400 font-semibold">Chỉ số học kỳ</p>
+        <h3 class="text-xl font-semibold text-slate-800">Điểm trung bình theo học kỳ</h3>
+      </div>
+      <span class="text-xs font-semibold text-brand bg-brand/10 px-3 py-1 rounded-full">Live</span>
+    </div>
+    <canvas id="semesterChart" height="140"></canvas>
+  </div>
+
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+    <p class="text-xs uppercase tracking-[0.2em] text-slate-400 font-semibold">Phân loại điểm</p>
+    <h3 class="text-xl font-semibold text-slate-800 mb-4">Tỉ lệ xếp loại</h3>
+    <canvas id="gradeChart" height="180"></canvas>
+  </div>
+</section>
+
+<section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <p class="text-xs uppercase tracking-[0.2em] text-slate-400 font-semibold">Môn học</p>
+        <h3 class="text-xl font-semibold text-slate-800">Điểm trung bình cao nhất</h3>
+      </div>
+      <button class="text-slate-500 hover:text-brand transition" data-refresh-subjects>
+        <i class="fa-solid fa-rotate"></i>
+      </button>
+    </div>
+    <canvas id="subjectChart" height="200"></canvas>
+  </div>
+
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+    <p class="text-xs uppercase tracking-[0.2em] text-slate-400 font-semibold">Điểm danh</p>
+    <h3 class="text-xl font-semibold text-slate-800 mb-4">Phiên gần đây</h3>
+    <div class="space-y-4">
+      <% if (!recentAttendance || recentAttendance.length === 0) { %>
+        <p class="text-slate-500">Chưa có phiên điểm danh nào.</p>
+      <% } else { %>
+        <% recentAttendance.forEach((session) => { %>
+          <div class="flex gap-3">
+            <div class="w-2 h-2 rounded-full bg-brand mt-2"></div>
+            <div class="flex-1">
+              <div class="flex justify-between">
+                <p class="font-semibold text-slate-800"><%= session.title %></p>
+                <span class="text-xs font-semibold text-brand bg-brand/10 px-2 py-1 rounded-full"><%= session.presentCount %> lượt</span>
+              </div>
+              <p class="text-slate-500 text-sm"><i class="fa-solid fa-clock mr-1"></i> <%= new Date(session.created_at).toLocaleString('vi-VN') %></p>
+              <p class="text-slate-500 text-sm">
+                <i class="fa-solid fa-layer-group mr-1"></i> <%= session.ten_lop || 'Tất cả lớp' %>
+                · <i class="fa-solid fa-book mr-1"></i> <%= session.ten_mon_hoc || 'Chưa chọn' %>
+              </p>
+            </div>
+          </div>
+        <% }) %>
+      <% } %>
+    </div>
+  </div>
+</section>
+
+<script>
+  window.dashboardData = <%- JSON.stringify(chartData || {}) %>;
+</script>

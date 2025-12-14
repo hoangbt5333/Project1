@@ -1,25 +1,35 @@
-<h2>Sửa thông môn học</h2>
-<form action="/monhoc/edit/<%= subjects.ma_mon_hoc %>" method="POST" class="mt-3">
-  <div class="mb-3">
-    <label class="form-label">Mã môn học</label>
-    <input type="text" name="ma_mon_hoc" class="form-control" value="<%= subjects.ma_mon_hoc %>" required>
+<div class="max-w-3xl">
+  <div class="mb-4 flex items-center justify-between">
+    <div>
+      <p class="text-xs uppercase tracking-[0.3em] text-slate-400 font-semibold">Môn học</p>
+      <h2 class="text-2xl font-bold text-slate-800">Chỉnh sửa môn học</h2>
+    </div>
+    <a href="/monhoc" class="px-4 py-2 rounded-xl border border-slate-200 text-slate-700 font-semibold hover:bg-slate-50 transition"><i class="fa fa-arrow-left mr-2"></i> Quay lại</a>
   </div>
-  <div class="mb-3">
-    <label class="form-label">Tên môn học</label>
-    <input type="text" name="ten_mon_hoc" class="form-control" value="<%= subjects.ten_mon_hoc %>" required>
-  </div>
-  <div class="mb-3">
-    <label class="form-label">Số tín chỉ</label>
-    <input type="number" name="tin_chi" class="form-control" value="<%= subjects.tin_chi %>" required>
-  </div>
-  <div class="mb-3">
-    <label class="form-label">Khoa</label>
-    <select name="ma_khoa" class="form-select" required>
-      <% khoaList.forEach(k => { %>
-        <option value="<%= k.ma_khoa %>" <%= k.ma_khoa === subjects.ma_khoa ? 'selected' : '' %>><%= k.ten_khoa %></option>
-      <% }) %>
-    </select>
-  </div>
-  <button type="submit" class="btn btn-success">Cập nhật</button>
-  <a href="/monhoc" class="btn btn-secondary">Hủy</a>
-</form>
+  <form action="/monhoc/edit/<%= subject.ma_mon_hoc %>" method="POST" class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 space-y-4">
+    <div>
+      <label class="block text-sm font-semibold text-slate-700 mb-1">Mã môn học</label>
+      <input type="text" value="<%= subject.ma_mon_hoc %>" readonly class="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-100">
+    </div>
+    <div>
+      <label class="block text-sm font-semibold text-slate-700 mb-1">Tên môn học</label>
+      <input type="text" name="ten_mon_hoc" value="<%= subject.ten_mon_hoc %>" required class="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:ring-2 focus:ring-brand focus:border-brand">
+    </div>
+    <div>
+      <label class="block text-sm font-semibold text-slate-700 mb-1">Khoa</label>
+      <select name="ma_khoa" class="w-full px-4 py-3 border border-slate-200 rounded-xl bg-white focus:ring-2 focus:ring-brand focus:border-brand">
+        <% khoaList.forEach(k => { %>
+          <option value="<%= k.ma_khoa %>" <%= k.ma_khoa === subject.ma_khoa ? 'selected' : '' %>><%= k.ten_khoa %></option>
+        <% }) %>
+      </select>
+    </div>
+    <div>
+      <label class="block text-sm font-semibold text-slate-700 mb-1">Tín chỉ</label>
+      <input type="number" name="tin_chi" value="<%= subject.tin_chi %>" class="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:ring-2 focus:ring-brand focus:border-brand">
+    </div>
+    <div class="flex items-center gap-3">
+      <button type="submit" class="px-5 py-3 bg-brand text-white font-semibold rounded-xl hover:bg-brand-soft transition">Lưu</button>
+      <a href="/monhoc" class="px-5 py-3 border border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 transition">Hủy</a>
+    </div>
+  </form>
+</div>
