@@ -43,4 +43,21 @@
   if (toastMessage) {
     fadeToast(toastMessage);
   }
+
+  // Tự động gắn CSRF token cho mọi form POST/PUT/PATCH/DELETE
+  const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+  if (csrfToken) {
+    document.querySelectorAll('form').forEach((form) => {
+      const method = (form.getAttribute('method') || 'GET').toUpperCase();
+      if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(method)) {
+        if (!form.querySelector('input[name="_csrf"]')) {
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = '_csrf';
+          input.value = csrfToken;
+          form.appendChild(input);
+        }
+      }
+    });
+  }
 })();

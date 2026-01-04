@@ -1,33 +1,58 @@
-require('dotenv').config();
 const express = require('express');
 const expressLayouts = require('express-ejs-layouts');
 const path = require('path');
 const session = require('express-session');
+const helmet = require('helmet');
+const compression = require('compression');
+const rateLimit = require('express-rate-limit');
+const csurf = require('csurf');
+const cookieParser = require('cookie-parser');
+const env = require('./config/env');
 const db = require('./db');
 
 const app = express();
 const dbPromise = db.promise();
 
-// Thiết lập session
+app.set('trust proxy', 1);
+
+app.use(helmet({ contentSecurityPolicy: false }));
+app.use(compression());
+app.use(cookieParser());
+
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+const globalLimiter = rateLimit({
+  windowMs: env.security.rateLimitWindowMs,
+  max: env.security.rateLimitMax,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use(globalLimiter);
+
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'your-secret-key',
+  secret: env.session.secret,
   resave: false,
-  saveUninitialized: true
+  saveUninitialized: false,
+  cookie: {
+    httpOnly: true,
+    sameSite: env.session.sameSite || 'lax',
+    secure: env.session.secure,
+    maxAge: 1000 * 60 * 60 * 2
+  }
 }));
 
-// Thiết lập EJS và layout
+app.use(csurf({ cookie: { httpOnly: true, sameSite: 'lax', secure: env.session.secure } }));
+
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(expressLayouts);
 app.set('layout', 'layout');
 
-// Cho phép nhận dữ liệu form
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-
 app.use((req, res, next) => {
   res.locals.user = req.session.user || null;
   res.locals.currentPath = req.path;
+  res.locals.csrfToken = req.csrfToken ? req.csrfToken() : '';
   next();
 });
 
@@ -53,7 +78,6 @@ app.use('/diem', diemRouter);
 app.use('/monhoc', monhocRouter);
 app.use('/attendance', attendanceRouter);
 
-// Cấu hình thư mục public chứa các file tĩnh
 app.use(express.static(path.join(__dirname, 'public')));
 
 const safeDashboardQuery = async (sql, params = []) => {
@@ -168,7 +192,15 @@ app.get('/roles', (req, res) => {
   res.render('roles', { title: 'Quản lý vai trò', users: [] });
 });
 
-const PORT = 3000;
+app.use((err, req, res, next) => {
+  if (err.code === 'EBADCSRFTOKEN') {
+    return res.status(403).send('Phiên hết hạn hoặc CSRF token không hợp lệ. Vui lòng tải lại trang.');
+  }
+  console.error(err);
+  res.status(500).send('Đã có lỗi xảy ra.');
+});
+
+const PORT = env.app.port || 3000;
 app.listen(PORT, () => {
   console.log(`Server đang chạy tại http://localhost:${PORT}`);
 });

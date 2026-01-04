@@ -30,6 +30,7 @@
 - DB_HOST, DB_USER, DB_PASSWORD, DB_NAME: thông tin MySQL
 - SESSION_SECRET: khóa phiên
 - APP_BASE_URL (tùy chọn khi deploy) để QR sinh đúng domain
+- SESSION_SECURE/SESSION_SAMESITE, RATE_LIMIT_WINDOW_MS/RATE_LIMIT_MAX (tùy chọn) để tinh chỉnh cookie & rate limit
 
 ## Bảng phục vụ điểm danh
 ```sql
@@ -60,3 +61,4 @@ CREATE TABLE attendance_records (
 ## Lưu ý bảo mật
 - `.env` đã được thêm vào `.gitignore`, không commit thông tin nhạy cảm.
 - Thư mục `uploads/` cũng bị bỏ qua để tránh đẩy file người dùng lên repo.
+- Đã bật helmet, nén gzip, rate limiting, và CSRF (token tự gắn vào form qua script). Nếu gặp lỗi CSRF khi phiên hết hạn, hãy refresh trang.
